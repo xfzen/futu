@@ -26,6 +26,11 @@ import (
 	"github.com/hyperjiang/futu/pb/qotgetfutureinfo"
 	"github.com/hyperjiang/futu/pb/qotgetinsiderholderlist"
 	"github.com/hyperjiang/futu/pb/qotgetinsidertradelist"
+	"github.com/hyperjiang/futu/pb/qotgetinstitutiondistribution"
+	"github.com/hyperjiang/futu/pb/qotgetinstitutionholdingchange"
+	"github.com/hyperjiang/futu/pb/qotgetinstitutionholdinglist"
+	"github.com/hyperjiang/futu/pb/qotgetinstitutionlist"
+	"github.com/hyperjiang/futu/pb/qotgetinstitutionprofile"
 	"github.com/hyperjiang/futu/pb/qotgetipolist"
 	"github.com/hyperjiang/futu/pb/qotgetkl"
 	"github.com/hyperjiang/futu/pb/qotgetmarketstate"
@@ -916,4 +921,44 @@ func (sdk *SDK) WarrantScreen(opts ...adapt.Option) (*qotwarrantscreen.S2C, erro
 	defer cancel()
 
 	return sdk.WarrantScreenWithContext(ctx, opts...)
+}
+
+// GetInstitutionList 3418 - gets the institution list.
+func (sdk *SDK) GetInstitutionList(market int32, opts ...adapt.Option) (*qotgetinstitutionlist.S2C, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
+	defer cancel()
+
+	return sdk.GetInstitutionListWithContext(ctx, market, opts...)
+}
+
+// GetInstitutionProfile 3419 - gets an institution profile.
+func (sdk *SDK) GetInstitutionProfile(market, institutionID int32) (*qotgetinstitutionprofile.S2C, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
+	defer cancel()
+
+	return sdk.GetInstitutionProfileWithContext(ctx, market, institutionID)
+}
+
+// GetInstitutionDistribution 3420 - gets institution industry distribution.
+func (sdk *SDK) GetInstitutionDistribution(market, institutionID int32) (*qotgetinstitutiondistribution.S2C, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
+	defer cancel()
+
+	return sdk.GetInstitutionDistributionWithContext(ctx, market, institutionID)
+}
+
+// GetInstitutionHoldingChange 3421 - gets institution holding changes.
+func (sdk *SDK) GetInstitutionHoldingChange(market, institutionID int32, opts ...adapt.Option) (*qotgetinstitutionholdingchange.S2C, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
+	defer cancel()
+
+	return sdk.GetInstitutionHoldingChangeWithContext(ctx, market, institutionID, opts...)
+}
+
+// GetInstitutionHoldingList 3422 - gets institution holdings.
+func (sdk *SDK) GetInstitutionHoldingList(market, institutionID int32, opts ...adapt.Option) (*qotgetinstitutionholdinglist.S2C, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
+	defer cancel()
+
+	return sdk.GetInstitutionHoldingListWithContext(ctx, market, institutionID, opts...)
 }

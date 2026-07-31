@@ -4,11 +4,59 @@ import (
 	"strings"
 
 	"github.com/hyperjiang/futu/pb/qotcommon"
+	"github.com/hyperjiang/futu/pb/qotgetinstitutionholdingchange"
+	"github.com/hyperjiang/futu/pb/qotgetinstitutionholdinglist"
+	"github.com/hyperjiang/futu/pb/qotgetinstitutionlist"
 	"github.com/hyperjiang/futu/pb/qotgetreference"
 	"github.com/hyperjiang/futu/pb/qotgetusersecuritygroup"
 	"github.com/hyperjiang/futu/pb/qotmodifyusersecurity"
 	"github.com/hyperjiang/futu/pb/qotsetpricereminder"
 	"google.golang.org/protobuf/proto"
+)
+
+// 机构目录排序字段
+const (
+	InstitutionListSortField_Unknown             = int32(qotgetinstitutionlist.SortField_SortField_Unknown)
+	InstitutionListSortField_PositionValue       = int32(qotgetinstitutionlist.SortField_SortField_PositionValue)
+	InstitutionListSortField_PositionValueChange = int32(qotgetinstitutionlist.SortField_SortField_PositionValueChange)
+	InstitutionListSortField_PositionCount       = int32(qotgetinstitutionlist.SortField_SortField_PositionCount)
+	InstitutionListSortField_PositionCountChange = int32(qotgetinstitutionlist.SortField_SortField_PositionCountChange)
+)
+
+// 机构披露排序方向
+const (
+	InstitutionSortDir_Descending = int32(qotgetinstitutionlist.SortDir_SortDir_Descending)
+	InstitutionSortDir_Ascending  = int32(qotgetinstitutionlist.SortDir_SortDir_Ascending)
+)
+
+// 机构持仓变动类型
+const (
+	InstitutionHoldingChangeType_Unknown  = int32(qotgetinstitutionholdingchange.HoldingChangeType_HoldingChangeType_Unknown)
+	InstitutionHoldingChangeType_New      = int32(qotgetinstitutionholdingchange.HoldingChangeType_HoldingChangeType_New)
+	InstitutionHoldingChangeType_SoldOut  = int32(qotgetinstitutionholdingchange.HoldingChangeType_HoldingChangeType_SoldOut)
+	InstitutionHoldingChangeType_Increase = int32(qotgetinstitutionholdingchange.HoldingChangeType_HoldingChangeType_Increase)
+	InstitutionHoldingChangeType_Decrease = int32(qotgetinstitutionholdingchange.HoldingChangeType_HoldingChangeType_Decrease)
+)
+
+// 机构持仓变动排序字段
+const (
+	InstitutionHoldingChangeSortField_Unknown      = int32(qotgetinstitutionholdingchange.SortField_SortField_Unknown)
+	InstitutionHoldingChangeSortField_ChangePct    = int32(qotgetinstitutionholdingchange.SortField_SortField_ChangePct)
+	InstitutionHoldingChangeSortField_ChangeShares = int32(qotgetinstitutionholdingchange.SortField_SortField_ChangeShares)
+	InstitutionHoldingChangeSortField_HoldingDate  = int32(qotgetinstitutionholdingchange.SortField_SortField_HoldingDate)
+)
+
+// 机构完整持股排序字段
+const (
+	InstitutionHoldingListSortField_Unknown        = int32(qotgetinstitutionholdinglist.SortField_SortField_Unknown)
+	InstitutionHoldingListSortField_HoldingValue   = int32(qotgetinstitutionholdinglist.SortField_SortField_HoldingValue)
+	InstitutionHoldingListSortField_HoldingPct     = int32(qotgetinstitutionholdinglist.SortField_SortField_HoldingPct)
+	InstitutionHoldingListSortField_LastHoldingPct = int32(qotgetinstitutionholdinglist.SortField_SortField_LastHoldingPct)
+	InstitutionHoldingListSortField_ChangeShares   = int32(qotgetinstitutionholdinglist.SortField_SortField_ChangeShares)
+	InstitutionHoldingListSortField_ChangePct      = int32(qotgetinstitutionholdinglist.SortField_SortField_ChangePct)
+	InstitutionHoldingListSortField_PortfolioPct   = int32(qotgetinstitutionholdinglist.SortField_SortField_PortfolioPct)
+	InstitutionHoldingListSortField_Industry       = int32(qotgetinstitutionholdinglist.SortField_SortField_Industry)
+	InstitutionHoldingListSortField_HoldingDate    = int32(qotgetinstitutionholdinglist.SortField_SortField_HoldingDate)
 )
 
 // 行情接口的市场常量

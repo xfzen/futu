@@ -98,4 +98,9 @@ const (
 	QotStockScreen                       = 3252 // 条件选股
 	QotOptionScreen                      = 3253 // 期权筛选
 	QotWarrantScreen                     = 3254 // 窝轮筛选
+	QotGetInstitutionList                = 3418 // 获取机构列表
+	QotGetInstitutionProfile             = 3419 // 获取机构概况
+	QotGetInstitutionDistribution        = 3420 // 获取机构持仓行业分布
+	QotGetInstitutionHoldingChange       = 3421 // 获取机构持仓变动
+	QotGetInstitutionHoldingList         = 3422 // 获取机构持股列表
 )

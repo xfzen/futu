@@ -1,0 +1,38 @@
+syntax = "proto2";
+package Qot_GetInstitutionProfile;
+option java_package = "com.futu.openapi.pb";
+option go_package = "github.com/hyperjiang/futu/pb/qotgetinstitutionprofile";
+
+message C2S {
+	required int32 market = 1;
+	required int32 institutionId = 2;
+}
+
+message S2C {
+	optional string institutionName = 1;
+	optional string description = 2;
+	optional double positionValue = 3;
+	optional double lastPositionValue = 4;
+	optional double positionValueChangePct = 5;
+	optional int64 totalHoldingCount = 6;
+	optional int64 holdingChangeCount = 7;
+	optional int32 newCount = 8;
+	optional int32 soldOutCount = 9;
+	optional int32 increaseCount = 10;
+	optional int32 decreaseCount = 11;
+	optional double top10Pct = 12;
+	optional double top10PctChange = 13;
+	optional string disclosureDate = 14;
+	optional string currency = 15;
+}
+
+message Request {
+	required C2S c2s = 1;
+}
+
+message Response {
+	required int32 retType = 1 [default = -400];
+	optional string retMsg = 2;
+	optional int32 errCode = 3;
+	optional S2C s2c = 4;
+}

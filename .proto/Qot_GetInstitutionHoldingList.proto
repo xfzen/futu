@@ -1,0 +1,74 @@
+syntax = "proto2";
+package Qot_GetInstitutionHoldingList;
+option java_package = "com.futu.openapi.pb";
+option go_package = "github.com/hyperjiang/futu/pb/qotgetinstitutionholdinglist";
+
+import "Qot_Common.proto";
+
+enum HoldingChangeType {
+	HoldingChangeType_Unknown = 0;
+	HoldingChangeType_New = 1;
+	HoldingChangeType_SoldOut = 2;
+	HoldingChangeType_Increase = 3;
+	HoldingChangeType_Decrease = 4;
+}
+
+enum SortField {
+	SortField_Unknown = 0;
+	SortField_HoldingValue = 1;
+	SortField_HoldingPct = 2;
+	SortField_LastHoldingPct = 3;
+	SortField_ChangeShares = 4;
+	SortField_ChangePct = 5;
+	SortField_PortfolioPct = 6;
+	SortField_Industry = 7;
+	SortField_HoldingDate = 8;
+}
+
+enum SortDir {
+	SortDir_Descending = 0;
+	SortDir_Ascending = 1;
+}
+
+message C2S {
+	required int32 market = 1;
+	required int32 institutionId = 2;
+	optional int32 changeType = 3;
+	optional int32 sortField = 4;
+	optional int32 sortDir = 5;
+	optional int32 count = 6;
+	optional string page = 7;
+	optional string keyword = 8;
+}
+
+message HoldingListItem {
+	required Qot_Common.Security security = 1;
+	optional string name = 2;
+	optional string industryName = 3;
+	optional double holdingValue = 4;
+	optional double holdingPct = 5;
+	optional double lastHoldingPct = 6;
+	optional int64 changeShares = 7;
+	optional double portfolioPct = 8;
+	optional double changePct = 9;
+	optional string holdingDate = 10;
+	optional string source = 11;
+}
+
+message S2C {
+	repeated HoldingListItem dataList = 1;
+	optional int32 allCount = 2;
+	optional string nextPage = 3;
+	optional string currency = 4;
+}
+
+message Request {
+	required C2S c2s = 1;
+}
+
+message Response {
+	required int32 retType = 1 [default = -400];
+	optional string retMsg = 2;
+	optional int32 errCode = 3;
+	optional S2C s2c = 4;
+}

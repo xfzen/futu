@@ -2,7 +2,9 @@
 
 The source files are downloaded from https://openapi.futunn.com/futu-api-doc/quick/demo.html
 
-Current version is `v10.6.6608`
+The base protocol bundle is `v10.6.6608`. Institution reference protocols
+`Qot_GetInstitutionList` through `Qot_GetInstitutionHoldingList` are maintained
+from the official Futu OpenAPI v10.9 protocol documentation.
 
 ## How to generate go codes on MacOS
 

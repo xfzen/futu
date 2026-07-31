@@ -140,6 +140,11 @@ fmt.Println(res)
 - [x] QotStockScreen                       = 3252 // 条件选股
 - [x] QotOptionScreen                      = 3253 // 期权筛选
 - [x] QotWarrantScreen                     = 3254 // 窝轮筛选
+- [x] QotGetInstitutionList                = 3418 // 获取机构列表
+- [x] QotGetInstitutionProfile             = 3419 // 获取机构概况
+- [x] QotGetInstitutionDistribution        = 3420 // 获取机构持仓行业分布
+- [x] QotGetInstitutionHoldingChange       = 3421 // 获取机构持仓变动
+- [x] QotGetInstitutionHoldingList         = 3422 // 获取机构持股列表
 
 ### 交易接口
 - [x] TrdGetAccList              = 2001 // 获取交易业务账户列表

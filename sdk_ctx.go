@@ -25,6 +25,11 @@ import (
 	"github.com/hyperjiang/futu/pb/qotgetfutureinfo"
 	"github.com/hyperjiang/futu/pb/qotgetinsiderholderlist"
 	"github.com/hyperjiang/futu/pb/qotgetinsidertradelist"
+	"github.com/hyperjiang/futu/pb/qotgetinstitutiondistribution"
+	"github.com/hyperjiang/futu/pb/qotgetinstitutionholdingchange"
+	"github.com/hyperjiang/futu/pb/qotgetinstitutionholdinglist"
+	"github.com/hyperjiang/futu/pb/qotgetinstitutionlist"
+	"github.com/hyperjiang/futu/pb/qotgetinstitutionprofile"
 	"github.com/hyperjiang/futu/pb/qotgetipolist"
 	"github.com/hyperjiang/futu/pb/qotgetkl"
 	"github.com/hyperjiang/futu/pb/qotgetmarketstate"
@@ -1370,4 +1375,63 @@ func (sdk *SDK) WarrantScreenWithContext(ctx context.Context, opts ...adapt.Opti
 	}
 
 	return sdk.cli.QotWarrantScreen(ctx, &c2s)
+}
+
+// GetInstitutionListWithContext 3418 - gets the institution list with context.
+func (sdk *SDK) GetInstitutionListWithContext(ctx context.Context, market int32, opts ...adapt.Option) (*qotgetinstitutionlist.S2C, error) {
+	o := adapt.NewOptions(opts...)
+	o["market"] = market
+
+	var c2s qotgetinstitutionlist.C2S
+	if err := o.ToProto(&c2s); err != nil {
+		return nil, err
+	}
+
+	return sdk.cli.QotGetInstitutionList(ctx, &c2s)
+}
+
+// GetInstitutionProfileWithContext 3419 - gets an institution profile with context.
+func (sdk *SDK) GetInstitutionProfileWithContext(ctx context.Context, market, institutionID int32) (*qotgetinstitutionprofile.S2C, error) {
+	c2s := &qotgetinstitutionprofile.C2S{
+		Market:        proto.Int32(market),
+		InstitutionId: proto.Int32(institutionID),
+	}
+	return sdk.cli.QotGetInstitutionProfile(ctx, c2s)
+}
+
+// GetInstitutionDistributionWithContext 3420 - gets institution industry distribution with context.
+func (sdk *SDK) GetInstitutionDistributionWithContext(ctx context.Context, market, institutionID int32) (*qotgetinstitutiondistribution.S2C, error) {
+	c2s := &qotgetinstitutiondistribution.C2S{
+		Market:        proto.Int32(market),
+		InstitutionId: proto.Int32(institutionID),
+	}
+	return sdk.cli.QotGetInstitutionDistribution(ctx, c2s)
+}
+
+// GetInstitutionHoldingChangeWithContext 3421 - gets institution holding changes with context.
+func (sdk *SDK) GetInstitutionHoldingChangeWithContext(ctx context.Context, market, institutionID int32, opts ...adapt.Option) (*qotgetinstitutionholdingchange.S2C, error) {
+	o := adapt.NewOptions(opts...)
+	o["market"] = market
+	o["institutionId"] = institutionID
+
+	var c2s qotgetinstitutionholdingchange.C2S
+	if err := o.ToProto(&c2s); err != nil {
+		return nil, err
+	}
+
+	return sdk.cli.QotGetInstitutionHoldingChange(ctx, &c2s)
+}
+
+// GetInstitutionHoldingListWithContext 3422 - gets institution holdings with context.
+func (sdk *SDK) GetInstitutionHoldingListWithContext(ctx context.Context, market, institutionID int32, opts ...adapt.Option) (*qotgetinstitutionholdinglist.S2C, error) {
+	o := adapt.NewOptions(opts...)
+	o["market"] = market
+	o["institutionId"] = institutionID
+
+	var c2s qotgetinstitutionholdinglist.C2S
+	if err := o.ToProto(&c2s); err != nil {
+		return nil, err
+	}
+
+	return sdk.cli.QotGetInstitutionHoldingList(ctx, &c2s)
 }

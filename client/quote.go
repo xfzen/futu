@@ -23,6 +23,11 @@ import (
 	"github.com/hyperjiang/futu/pb/qotgetfutureinfo"
 	"github.com/hyperjiang/futu/pb/qotgetinsiderholderlist"
 	"github.com/hyperjiang/futu/pb/qotgetinsidertradelist"
+	"github.com/hyperjiang/futu/pb/qotgetinstitutiondistribution"
+	"github.com/hyperjiang/futu/pb/qotgetinstitutionholdingchange"
+	"github.com/hyperjiang/futu/pb/qotgetinstitutionholdinglist"
+	"github.com/hyperjiang/futu/pb/qotgetinstitutionlist"
+	"github.com/hyperjiang/futu/pb/qotgetinstitutionprofile"
 	"github.com/hyperjiang/futu/pb/qotgetipolist"
 	"github.com/hyperjiang/futu/pb/qotgetkl"
 	"github.com/hyperjiang/futu/pb/qotgetmarketstate"
@@ -1485,6 +1490,111 @@ func (client *Client) QotWarrantScreen(ctx context.Context, c2s *qotwarrantscree
 	ch := make(chan *qotwarrantscreen.Response, 1)
 	defer close(ch)
 	if err := client.Request(protoid.QotWarrantScreen, req, infra.NewProtobufChan(ch)); err != nil {
+		return nil, err
+	}
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	case <-client.closed:
+		return nil, ErrInterrupted
+	case resp, ok := <-ch:
+		if !ok {
+			return nil, ErrChannelClosed
+		}
+		return resp.GetS2C(), infra.Error(resp)
+	}
+}
+
+// QotGetInstitutionList 3418 - 获取机构列表
+func (client *Client) QotGetInstitutionList(ctx context.Context, c2s *qotgetinstitutionlist.C2S) (*qotgetinstitutionlist.S2C, error) {
+	req := &qotgetinstitutionlist.Request{C2S: c2s}
+	ch := make(chan *qotgetinstitutionlist.Response, 1)
+	defer close(ch)
+	if err := client.Request(protoid.QotGetInstitutionList, req, infra.NewProtobufChan(ch)); err != nil {
+		return nil, err
+	}
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	case <-client.closed:
+		return nil, ErrInterrupted
+	case resp, ok := <-ch:
+		if !ok {
+			return nil, ErrChannelClosed
+		}
+		return resp.GetS2C(), infra.Error(resp)
+	}
+}
+
+// QotGetInstitutionProfile 3419 - 获取机构概况
+func (client *Client) QotGetInstitutionProfile(ctx context.Context, c2s *qotgetinstitutionprofile.C2S) (*qotgetinstitutionprofile.S2C, error) {
+	req := &qotgetinstitutionprofile.Request{C2S: c2s}
+	ch := make(chan *qotgetinstitutionprofile.Response, 1)
+	defer close(ch)
+	if err := client.Request(protoid.QotGetInstitutionProfile, req, infra.NewProtobufChan(ch)); err != nil {
+		return nil, err
+	}
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	case <-client.closed:
+		return nil, ErrInterrupted
+	case resp, ok := <-ch:
+		if !ok {
+			return nil, ErrChannelClosed
+		}
+		return resp.GetS2C(), infra.Error(resp)
+	}
+}
+
+// QotGetInstitutionDistribution 3420 - 获取机构持仓行业分布
+func (client *Client) QotGetInstitutionDistribution(ctx context.Context, c2s *qotgetinstitutiondistribution.C2S) (*qotgetinstitutiondistribution.S2C, error) {
+	req := &qotgetinstitutiondistribution.Request{C2S: c2s}
+	ch := make(chan *qotgetinstitutiondistribution.Response, 1)
+	defer close(ch)
+	if err := client.Request(protoid.QotGetInstitutionDistribution, req, infra.NewProtobufChan(ch)); err != nil {
+		return nil, err
+	}
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	case <-client.closed:
+		return nil, ErrInterrupted
+	case resp, ok := <-ch:
+		if !ok {
+			return nil, ErrChannelClosed
+		}
+		return resp.GetS2C(), infra.Error(resp)
+	}
+}
+
+// QotGetInstitutionHoldingChange 3421 - 获取机构持仓变动
+func (client *Client) QotGetInstitutionHoldingChange(ctx context.Context, c2s *qotgetinstitutionholdingchange.C2S) (*qotgetinstitutionholdingchange.S2C, error) {
+	req := &qotgetinstitutionholdingchange.Request{C2S: c2s}
+	ch := make(chan *qotgetinstitutionholdingchange.Response, 1)
+	defer close(ch)
+	if err := client.Request(protoid.QotGetInstitutionHoldingChange, req, infra.NewProtobufChan(ch)); err != nil {
+		return nil, err
+	}
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	case <-client.closed:
+		return nil, ErrInterrupted
+	case resp, ok := <-ch:
+		if !ok {
+			return nil, ErrChannelClosed
+		}
+		return resp.GetS2C(), infra.Error(resp)
+	}
+}
+
+// QotGetInstitutionHoldingList 3422 - 获取机构持股列表
+func (client *Client) QotGetInstitutionHoldingList(ctx context.Context, c2s *qotgetinstitutionholdinglist.C2S) (*qotgetinstitutionholdinglist.S2C, error) {
+	req := &qotgetinstitutionholdinglist.Request{C2S: c2s}
+	ch := make(chan *qotgetinstitutionholdinglist.Response, 1)
+	defer close(ch)
+	if err := client.Request(protoid.QotGetInstitutionHoldingList, req, infra.NewProtobufChan(ch)); err != nil {
 		return nil, err
 	}
 	select {
