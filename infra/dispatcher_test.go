@@ -56,3 +56,13 @@ func TestDispatcher(t *testing.T) {
 
 	hub.Close()
 }
+
+func TestDispatcherHubCloseLeavesResponseChannelOwnedByCaller(t *testing.T) {
+	ch := make(chan *common.PacketID, 1)
+	hub := infra.NewDispatcherHub()
+	hub.Register(1001, 1, infra.NewProtobufChan(ch))
+
+	hub.Close()
+
+	require.NotPanics(t, func() { close(ch) })
+}

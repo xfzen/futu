@@ -60,13 +60,13 @@ func (d *Dispatcher) Dispatch(sn uint32, body []byte) error {
 	return nil
 }
 
-// Close closes all channels.
+// Close removes all registered channels. The callers that created the
+// channels remain responsible for closing them.
 func (d *Dispatcher) Close() {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	for sn, ch := range d.channels {
-		ch.Close()
+	for sn := range d.channels {
 		delete(d.channels, sn)
 	}
 }

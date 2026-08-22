@@ -35,15 +35,17 @@ import (
 type Client struct {
 	Options
 
-	conn     net.Conn
-	sn       atomic.Uint32 // serial number
-	resChan  chan response // response channel
-	closed   chan struct{} // indicate the client is closed
-	hub      *infra.DispatcherHub
-	connID   uint64
-	userID   uint64
-	crypto   *infra.Crypto
-	handlers sync.Map // push notification handlers
+	conn      net.Conn
+	sn        atomic.Uint32 // serial number
+	resChan   chan response // response channel
+	closed    chan struct{} // indicate the client is closed
+	hub       *infra.DispatcherHub
+	connID    uint64
+	userID    uint64
+	crypto    *infra.Crypto
+	handlers  sync.Map // push notification handlers
+	closeOnce sync.Once
+	closeErr  error
 }
 
 // New creates a new client.
@@ -111,15 +113,15 @@ func (client *Client) GetUserID() uint64 {
 
 // Close closes the client.
 func (client *Client) Close() error {
-	close(client.closed)
+	client.closeOnce.Do(func() {
+		close(client.closed)
+		client.hub.Close()
+		if client.conn != nil {
+			client.closeErr = client.conn.Close()
+		}
+	})
 
-	client.hub.Close()
-
-	if client.conn == nil {
-		return nil
-	}
-
-	return client.conn.Close()
+	return client.closeErr
 }
 
 // Request sends a request to the server.
