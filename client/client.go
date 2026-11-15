@@ -5,8 +5,10 @@ import (
 	"crypto/sha1"
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"io"
 	"net"
+	"os"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -30,6 +32,8 @@ import (
 	"github.com/rs/zerolog/log"
 	"google.golang.org/protobuf/proto"
 )
+
+const openDHandshakeTimeout = 5 * time.Second
 
 // Client is the client to connect to Futu OpenD.
 type Client struct {
@@ -62,10 +66,13 @@ func New(opts ...Option) (*Client, error) {
 		return nil, err
 	}
 
+	deadline := time.Now().Add(openDHandshakeTimeout)
+	if err := client.conn.SetDeadline(deadline); err != nil {
+		client.Close()
+		return nil, err
+	}
 	go client.listen()
-	go client.infiniteRead()
-
-	s2c, err := client.initConnect()
+	s2c, err := client.initConnect(deadline)
 	if err != nil {
 		client.Close()
 		return nil, err
@@ -92,6 +99,11 @@ func New(opts ...Option) (*Client, error) {
 		}
 	}
 
+	if err := client.conn.SetDeadline(time.Time{}); err != nil {
+		client.Close()
+		return nil, err
+	}
+	go client.infiniteRead()
 	if interval := s2c.GetKeepAliveInterval(); interval > 0 {
 		go client.heartbeat(time.Second * time.Duration(interval))
 	}
@@ -320,7 +332,7 @@ func (client *Client) nextSN() uint32 {
 }
 
 func (client *Client) dial() error {
-	conn, err := net.Dial("tcp", client.Addr)
+	conn, err := net.DialTimeout("tcp", client.Addr, openDHandshakeTimeout)
 	if err != nil {
 		log.Error().Err(err).Msg("dial failed")
 		return err
@@ -411,7 +423,7 @@ func (client *Client) infiniteRead() {
 	}
 }
 
-func (client *Client) initConnect() (*initconnect.S2C, error) {
+func (client *Client) initConnect(deadline time.Time) (*initconnect.S2C, error) {
 	req := &initconnect.Request{
 		C2S: &initconnect.C2S{
 			ClientVer:           proto.Int32(ClientVersion),
@@ -429,9 +441,16 @@ func (client *Client) initConnect() (*initconnect.S2C, error) {
 		return nil, err
 	}
 
+	if err := client.read(); err != nil {
+		return nil, fmt.Errorf("OpenD handshake: %w", err)
+	}
+	timer := time.NewTimer(time.Until(deadline))
+	defer timer.Stop()
 	select {
 	case <-client.closed:
 		return nil, ErrInterrupted
+	case <-timer.C:
+		return nil, fmt.Errorf("OpenD handshake: %w", os.ErrDeadlineExceeded)
 	case resp, ok := <-ch:
 		if !ok {
 			return nil, ErrChannelClosed
