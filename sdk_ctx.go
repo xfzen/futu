@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/hyperjiang/futu/adapt"
+	"github.com/hyperjiang/futu/client"
 	"github.com/hyperjiang/futu/pb/getglobalstate"
 	"github.com/hyperjiang/futu/pb/qotcommon"
 	"github.com/hyperjiang/futu/pb/qotgetbasicqot"
@@ -91,6 +92,17 @@ import (
 	"github.com/hyperjiang/futu/pb/trdunlocktrade"
 	"google.golang.org/protobuf/proto"
 )
+
+// NewSDKWithContext limits TCP connection setup and the OpenD handshake.
+// A successfully initialized SDK remains open until explicitly closed.
+func NewSDKWithContext(ctx context.Context, opts ...client.Option) (*SDK, error) {
+	cli, err := client.NewWithContext(ctx, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	return &SDK{cli: cli}, nil
+}
 
 // GetGlobalStateWithContext 1002 - gets the global state with context.
 func (sdk *SDK) GetGlobalStateWithContext(ctx context.Context) (*getglobalstate.S2C, error) {

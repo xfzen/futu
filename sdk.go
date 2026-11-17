@@ -89,12 +89,7 @@ type SDK struct {
 
 // NewSDK creates a new Futu SDK.
 func NewSDK(opts ...client.Option) (*SDK, error) {
-	cli, err := client.New(opts...)
-	if err != nil {
-		return nil, err
-	}
-
-	return &SDK{cli: cli}, nil
+	return NewSDKWithContext(context.Background(), opts...)
 }
 
 // Close closes the client.

@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"context"
 	"crypto/sha1"
 	"encoding/binary"
 	"errors"
@@ -50,6 +51,12 @@ type Client struct {
 
 // New creates a new client.
 func New(opts ...Option) (*Client, error) {
+	return NewWithContext(context.Background(), opts...)
+}
+
+// NewWithContext establishes the connection under ctx and closes a partially
+// initialized client if the caller stops waiting.
+func NewWithContext(ctx context.Context, opts ...Option) (*Client, error) {
 	client := &Client{
 		Options:  NewOptions(opts...),
 		closed:   make(chan struct{}),
@@ -58,9 +65,11 @@ func New(opts ...Option) (*Client, error) {
 	}
 	client.resChan = make(chan response, client.ResChanSize)
 
-	if err := client.dial(); err != nil {
+	if err := client.dial(ctx); err != nil {
 		return nil, err
 	}
+	stopClose := context.AfterFunc(ctx, func() { _ = client.Close() })
+	defer stopClose()
 
 	go client.listen()
 	go client.infiniteRead()
@@ -68,6 +77,9 @@ func New(opts ...Option) (*Client, error) {
 	s2c, err := client.initConnect()
 	if err != nil {
 		client.Close()
+		if cause := ctx.Err(); cause != nil {
+			return nil, cause
+		}
 		return nil, err
 	}
 
@@ -92,6 +104,10 @@ func New(opts ...Option) (*Client, error) {
 		}
 	}
 
+	if !stopClose() || ctx.Err() != nil {
+		_ = client.Close()
+		return nil, ctx.Err()
+	}
 	if interval := s2c.GetKeepAliveInterval(); interval > 0 {
 		go client.heartbeat(time.Second * time.Duration(interval))
 	}
@@ -319,8 +335,8 @@ func (client *Client) nextSN() uint32 {
 	return client.sn.Add(1)
 }
 
-func (client *Client) dial() error {
-	conn, err := net.Dial("tcp", client.Addr)
+func (client *Client) dial(ctx context.Context) error {
+	conn, err := (&net.Dialer{}).DialContext(ctx, "tcp", client.Addr)
 	if err != nil {
 		log.Error().Err(err).Msg("dial failed")
 		return err
@@ -422,8 +438,9 @@ func (client *Client) initConnect() (*initconnect.S2C, error) {
 		},
 	}
 
+	// The dispatcher may still deliver one buffered response as cancellation
+	// closes the connection. Leave this private channel open for that delivery.
 	ch := make(chan *initconnect.Response, 1)
-	defer close(ch)
 
 	if err := client.Request(protoid.InitConnect, req, infra.NewProtobufChan(ch)); err != nil {
 		return nil, err
